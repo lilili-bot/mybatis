@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 约束DTD -->
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--config核心根标签 -->
+<configuration>
+    <properties resource="jdbc.properties"></properties>
+    <settings>
+        <setting name="logImpl" value="log4j"/>
+    </settings>
+    <!-- 环境配置，可以有多个环境，default属性可以指定使用哪一个环境-->
+    <typeAliases>
+        <!-- 起别名，简化mapper文件 !!!!!注意跟标签下，子标签，顺序不能变化！！！！会报错-->
+        <typeAlias type="com.itheima.bean.Student" alias="Student"></typeAlias>
+        <!--<package name="com.itheima.bean"/>-->
+        <!--
+        MyBatis对常用的数据类型，已经起好了别名，不需要手动重新起别名
+        对应的数据容器，别名为起对应的数据类型。
+        java.lang.String -> string
+        java.lang.Integer -> int
+        java.lang.Long -> long
+        java.lang.Double -> double
+        java.lang.Boolean -> boolean
+        ...
+         -->
+    </typeAliases>
+    <!-- 分页插件，代替SQL 中的limit 页数-1 * 每页显示的条数 -->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+    </plugins>
+    <environments default="mysql">
+        <!-- 数据库环境的配置，ID指定是哪一个数据库，唯一的标识 -->
+        <environment id="mysql">
+            <!-- 事务管理，type属性，用来指定使用JDBC默认的事务 -->
+            <transactionManager type="JDBC"></transactionManager>
+            <!-- 数据源的类型，type属性，这里是连接池 -->
+            <dataSource type="POOLED">
+                <!--属性，获取数据库的连接的配置信息 -->
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <!-- mapper匹配文件，用来执行SQL语句，里面可以有增删改查的功能 -->
+        <mapper resource="StudentMapper.xml"/>
+    </mappers>
+</configuration>

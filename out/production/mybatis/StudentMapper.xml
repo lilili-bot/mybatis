@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 指定DTD约束-->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- SELECT, UPDATE, DELETE, INSERT 对应sql的执行功能 -->
+<!-- ID 是唯一的标识-->
+<!-- resultTYPE是指定结果映射对象的类型 -->
+<!-- parameterTYPE是指定参数映射对象的类型 -->
+<!-- 节省手动创建DAO层mapper接口实现类对象，使用MYBATIS自带的实现接口对象，需要更改namespace为起全类名-->
+<mapper namespace="com.itheima.mapper.StudentMapper">
+
+    <!-- mapper的根标签-->
+    <!-- resultType要和类返回结果的类型一致， parameterType要和类方法中要求的参数数据类型一致-->
+    <!-- SQL语句的抽取，为了避免重复写SQL语句, 使用SQL标签进行抽取，给唯一的ID，INCLUDE 标签使用 -->
+    <sql id="select">
+        SELECT * FROM students
+    </sql>
+    <select id="selectAll" resultType="Student">
+        <!--SELECT * FROM students -->
+        <include refid="select"></include>
+    </select>
+
+    <select id="selectById" resultType="Student" parameterType="int">
+        <include refid="select"></include>
+        WHERE sid = #{sid}
+    </select>
+
+    <insert id="insert" parameterType="Student">
+        INSERT INTO students VALUES (#{sid},#{name},#{age},#{birthday})
+    </insert>
+
+    <update id="update" parameterType="Student">
+        UPDATE students SET sid=#{sid},name=#{name},age=#{age},birthday=#{birthday} WHERE sid = #{sid}
+    </update>
+
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM students WHERE sid = #{sid}
+    </delete>
+
+    <select id="conditionSelect" resultType="Student" parameterType="Student">
+        <!--SELECT * FROM students WHERE sid=#{sid} AND name = #{name} AND age= #{age}-->
+        <!--动态SQL 使用 where标签 和 if test-->
+
+        <include refid="select"></include>
+        <where>
+            <if test="sid != null">
+                sid = #{sid}
+            </if>
+            <if test="name != null">
+                AND name = #{name}
+            </if>
+            <if test="age != null">
+                AND age = #{age}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByIds" resultType="Student" parameterType="list">
+        SELECT * FROM students
+        <!--collection 标识参数容器类型，list - 集合 array 数组-->
+        <!--open 开始的SQL语句-->
+        <!--close 结束的SQL语句-->
+        <!--item 参数的变量名-->
+        <where>
+            <foreach collection="list" open="sid IN (" close=")" item="sids" separator=",">
+                #{sids}
+            </foreach>
+        </where>
+    </select>
+
+</mapper>
